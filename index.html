@@ -794,11 +794,13 @@ function sendResultsToBackend(email, sectionAverages, overallAvg) {
     overall: overallAvg
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbxq23tVWuoAnUxUFf-_TJk1kiho7LsACckC256-YMt8BAs51DROLHgmYpajkWtI-hoq/exec", {
+  // IMPORTANT:
+  // - Use your Apps Script Web App URL
+  // - mode: "no-cors"
+  // - NO custom headers (so browser will send the request without blocking)
+  fetch("https://script.google.com/macros/s/AKfycbwW4XlXdR0dB1juieWdn8Ns2GCyzygM4t1y6RPMh5Gxl0c2_T_QOVQFLQOsaqjWSLs7/exec", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    mode: "no-cors",
     body: JSON.stringify(payload)
   }).catch(err => {
     console.error("Error sending results to backend:", err);
