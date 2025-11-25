@@ -51,6 +51,84 @@
       margin-bottom: 1.2rem;
     }
 
+    /* Intro screen */
+    .intro-screen {
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.1rem 1.2rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      background: #fff7f3;
+    }
+
+    .intro-heading {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .intro-text-main {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-bullets {
+      font-size: 0.85rem;
+      margin: 0 0 0.9rem 0;
+      padding-left: 1.1rem;
+      color: #555;
+    }
+
+    .intro-bullets li {
+      margin-bottom: 0.2rem;
+    }
+
+    .intro-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .intro-note {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.8rem;
+    }
+
+    .intro-later-form {
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed #e2b29b;
+    }
+
+    .intro-later-form label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .intro-later-form input[type="email"] {
+      width: 100%;
+      max-width: 340px;
+      padding: 0.4rem 0.55rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-light);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-later-thanks {
+      margin-top: 0.8rem;
+      padding: 0.6rem 0.7rem;
+      background: #f2fbfa;
+      border-left: 4px solid var(--cq-teal);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Assessment core styles */
     .instructions {
       font-size: 0.9rem;
       margin-bottom: 1.4rem;
@@ -269,6 +347,41 @@
       margin-bottom: 0.1rem;
     }
 
+    /* Result CTAs */
+    .results-ctas {
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px dashed var(--border-light);
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .results-cta-block {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      padding: 0.75rem 0.9rem;
+    }
+
+    .results-cta-block p {
+      margin: 0;
+      font-size: 0.9rem;
+      flex: 1 1 auto;
+    }
+
+    .results-cta-share {
+      background: #f2fbfa;
+      border-left: 4px solid var(--cq-teal);
+    }
+
+    .results-cta-krishna {
+      background: #fff7f3;
+      border-left: 4px solid var(--cq-orange);
+    }
+
     @media print {
       body {
         padding: 0;
@@ -279,8 +392,19 @@
         border-radius: 0;
         max-width: none;
       }
-      .actions {
+      .actions,
+      .intro-screen,
+      .results-ctas {
         display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      .assessment-wrapper {
+        padding: 1.25rem 1.2rem 1.6rem;
       }
     }
   </style>
@@ -293,366 +417,519 @@
       Assess your team’s collective leadership capacity for sound, balanced judgment under pressure.
     </p>
 
-    <div class="instructions">
-      <strong>Instructions:</strong>
-      For each statement, select a rating from <strong>1</strong> (Rarely True) to
-      <strong>5</strong> (Consistently True). When finished, enter your email at the bottom and click
-      <strong>“Calculate Scores”</strong> to see section and overall results.
+    <!-- Intro screen: Take later / Take now -->
+    <div id="intro-screen" class="intro-screen">
+      <div class="intro-heading">How would you like to do this?</div>
+      <div class="intro-text-main">
+        This short assessment shows where your team’s judgment is strong and where it is fragile under pressure.
+      </div>
+      <ul class="intro-bullets">
+        <li>2–3 minutes to complete, 24 questions.</li>
+        <li>Results help you see patterns across calm, conflict, and high-stakes decisions.</li>
+      </ul>
+
+      <div id="intro-choices" class="intro-buttons">
+        <!-- Take it later FIRST (teal primary) -->
+        <button class="btn-primary" type="button" onclick="showTakeLaterForm()">
+          Take It later
+        </button>
+        <!-- Take it now (secondary outline) -->
+        <button class="btn-secondary" type="button" onclick="startAssessmentNow()">
+          Take It Now
+        </button>
+      </div>
+
+      <div id="intro-later-form" class="intro-later-form" style="display:none;">
+        <label for="reminderEmail">Enter your email so we can record that you’d like to take this assessment later:</label>
+        <input type="email" id="reminderEmail" placeholder="you@example.com" />
+        <div class="intro-buttons" style="margin-top:0.3rem;">
+          <button class="btn-primary" type="button" onclick="submitTakeLaterEmail()">
+            Submit
+          </button>
+        </div>
+      </div>
+
+      <div id="intro-later-thanks" class="intro-later-thanks" style="display:none;">
+        Thank you. You'll receive an email along with the assessment link.
+      </div>
+
+      <div class="intro-note">
+        Note: Your email is used to record your interest and to aggregate results. It will not be shared outside Team JQ®.
+      </div>
     </div>
 
-    <div class="legend">
-      <span class="label">Scale:</span>
-      <span>1 = Rarely True</span>
-      <span>2 = Sometimes True</span>
-      <span>3 = Occasionally True</span>
-      <span>4 = Often True</span>
-      <span>5 = Consistently True</span>
-    </div>
+    <!-- Assessment proper -->
+    <div id="assessment-screen" style="display:none;">
+      <div class="instructions">
+        <strong>Instructions:</strong>
+        For each statement, select a rating from <strong>1</strong> (Rarely True) to
+        <strong>5</strong> (Consistently True). When finished, enter your email at the bottom and click
+        <strong>“Calculate Scores”</strong> to see section and overall results.
+      </div>
 
-    <!-- 1. Emotional Regulation & Collective Calm -->
-    <div class="section">
-      <div class="section-header">1. Emotional Regulation &amp; Collective Calm</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="1">
-            <td class="question-text">The team slows down rather than speeds up under pressure.</td>
-            <td class="scale"><input type="radio" name="s1_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s1_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s1_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s1_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s1_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="1">
-            <td class="question-text">Members feel safe acknowledging stress or uncertainty.</td>
-            <td class="scale"><input type="radio" name="s1_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s1_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s1_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s1_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s1_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="1">
-            <td class="question-text">Urgency does not routinely override reflection.</td>
-            <td class="scale"><input type="radio" name="s1_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s1_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s1_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s1_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s1_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="1">
-            <td class="question-text">After mistakes, the team recovers emotional balance quickly.</td>
-            <td class="scale"><input type="radio" name="s1_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s1_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s1_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s1_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s1_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="legend">
+        <span class="label">Scale:</span>
+        <span>1 = Rarely True</span>
+        <span>2 = Sometimes True</span>
+        <span>3 = Occasionally True</span>
+        <span>4 = Often True</span>
+        <span>5 = Consistently True</span>
+      </div>
 
-    <!-- 2. Cognitive Diversity & Perspective Integration -->
-    <div class="section">
-      <div class="section-header">2. Cognitive Diversity &amp; Perspective Integration</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="2">
-            <td class="question-text">Dissenting viewpoints are welcomed and explored.</td>
-            <td class="scale"><input type="radio" name="s2_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s2_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s2_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s2_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s2_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="2">
-            <td class="question-text">Disagreement is treated as a resource rather than a threat.</td>
-            <td class="scale"><input type="radio" name="s2_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s2_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s2_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s2_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s2_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="2">
-            <td class="question-text">Important decisions reflect multiple perspectives.</td>
-            <td class="scale"><input type="radio" name="s2_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s2_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s2_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s2_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s2_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="2">
-            <td class="question-text">Blind spots are intentionally surfaced before commitments are made.</td>
-            <td class="scale"><input type="radio" name="s2_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s2_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s2_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s2_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s2_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- 1. Emotional Regulation & Collective Calm -->
+      <div class="section">
+        <div class="section-header">1. Emotional Regulation &amp; Collective Calm</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="1">
+              <td class="question-text">The team slows down rather than speeds up under pressure.</td>
+              <td class="scale"><input type="radio" name="s1_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s1_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s1_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s1_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s1_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="1">
+              <td class="question-text">Members feel safe acknowledging stress or uncertainty.</td>
+              <td class="scale"><input type="radio" name="s1_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s1_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s1_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s1_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s1_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="1">
+              <td class="question-text">Urgency does not routinely override reflection.</td>
+              <td class="scale"><input type="radio" name="s1_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s1_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s1_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s1_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s1_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="1">
+              <td class="question-text">After mistakes, the team recovers emotional balance quickly.</td>
+              <td class="scale"><input type="radio" name="s1_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s1_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s1_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s1_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s1_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- 3. Psychological Safety & Trust -->
-    <div class="section">
-      <div class="section-header">3. Psychological Safety &amp; Trust</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="3">
-            <td class="question-text">Anyone can respectfully challenge ideas without fear of backlash.</td>
-            <td class="scale"><input type="radio" name="s3_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s3_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s3_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s3_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s3_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="3">
-            <td class="question-text">Quiet or minority voices meaningfully influence decisions.</td>
-            <td class="scale"><input type="radio" name="s3_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s3_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s3_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s3_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s3_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="3">
-            <td class="question-text">Changing one’s mind is viewed as maturity, not weakness.</td>
-            <td class="scale"><input type="radio" name="s3_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s3_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s3_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s3_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s3_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="3">
-            <td class="question-text">Emotional triggers and conflicts are handled constructively.</td>
-            <td class="scale"><input type="radio" name="s3_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s3_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s3_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s3_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s3_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- 2. Cognitive Diversity & Perspective Integration -->
+      <div class="section">
+        <div class="section-header">2. Cognitive Diversity &amp; Perspective Integration</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="2">
+              <td class="question-text">Dissenting viewpoints are welcomed and explored.</td>
+              <td class="scale"><input type="radio" name="s2_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s2_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s2_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s2_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s2_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="2">
+              <td class="question-text">Disagreement is treated as a resource rather than a threat.</td>
+              <td class="scale"><input type="radio" name="s2_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s2_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s2_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s2_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s2_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="2">
+              <td class="question-text">Important decisions reflect multiple perspectives.</td>
+              <td class="scale"><input type="radio" name="s2_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s2_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s2_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s2_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s2_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="2">
+              <td class="question-text">Blind spots are intentionally surfaced before commitments are made.</td>
+              <td class="scale"><input type="radio" name="s2_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s2_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s2_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s2_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s2_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- 4. Decision Hygiene & Process Discipline -->
-    <div class="section">
-      <div class="section-header">4. Decision Hygiene &amp; Process Discipline</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="4">
-            <td class="question-text">Decision criteria are clarified before debates begin.</td>
-            <td class="scale"><input type="radio" name="s4_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s4_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s4_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s4_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s4_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="4">
-            <td class="question-text">Facts are separated from interpretations and emotions.</td>
-            <td class="scale"><input type="radio" name="s4_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s4_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s4_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s4_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s4_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="4">
-            <td class="question-text">We regularly review how we decided, not just what we decided.</td>
-            <td class="scale"><input type="radio" name="s4_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s4_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s4_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s4_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s4_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="4">
-            <td class="question-text">Reversible vs. irreversible decisions are consciously distinguished.</td>
-            <td class="scale"><input type="radio" name="s4_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s4_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s4_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s4_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s4_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- 3. Psychological Safety & Trust -->
+      <div class="section">
+        <div class="section-header">3. Psychological Safety &amp; Trust</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="3">
+              <td class="question-text">Anyone can respectfully challenge ideas without fear of backlash.</td>
+              <td class="scale"><input type="radio" name="s3_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s3_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s3_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s3_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s3_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="3">
+              <td class="question-text">Quiet or minority voices meaningfully influence decisions.</td>
+              <td class="scale"><input type="radio" name="s3_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s3_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s3_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s3_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s3_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="3">
+              <td class="question-text">Changing one’s mind is viewed as maturity, not weakness.</td>
+              <td class="scale"><input type="radio" name="s3_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s3_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s3_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s3_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s3_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="3">
+              <td class="question-text">Emotional triggers and conflicts are handled constructively.</td>
+              <td class="scale"><input type="radio" name="s3_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s3_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s3_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s3_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s3_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- 5. Reflection & Learning Loop -->
-    <div class="section">
-      <div class="section-header">5. Reflection &amp; Learning Loop</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="5">
-            <td class="question-text">Past decisions are revisited to examine our reasoning patterns.</td>
-            <td class="scale"><input type="radio" name="s5_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s5_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s5_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s5_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s5_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="5">
-            <td class="question-text">Judgment strengths and gaps are identified and discussed.</td>
-            <td class="scale"><input type="radio" name="s5_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s5_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s5_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s5_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s5_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="5">
-            <td class="question-text">Lessons learned are documented and reused in future decisions.</td>
-            <td class="scale"><input type="radio" name="s5_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s5_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s5_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s5_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s5_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="5">
-            <td class="question-text">Feedback is viewed primarily as developmental, not judgmental.</td>
-            <td class="scale"><input type="radio" name="s5_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s5_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s5_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s5_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s5_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- 4. Decision Hygiene & Process Discipline -->
+      <div class="section">
+        <div class="section-header">4. Decision Hygiene &amp; Process Discipline</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="4">
+              <td class="question-text">Decision criteria are clarified before debates begin.</td>
+              <td class="scale"><input type="radio" name="s4_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s4_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s4_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s4_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s4_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="4">
+              <td class="question-text">Facts are separated from interpretations and emotions.</td>
+              <td class="scale"><input type="radio" name="s4_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s4_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s4_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s4_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s4_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="4">
+              <td class="question-text">We regularly review how we decided, not just what we decided.</td>
+              <td class="scale"><input type="radio" name="s4_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s4_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s4_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s4_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s4_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="4">
+              <td class="question-text">Reversible vs. irreversible decisions are consciously distinguished.</td>
+              <td class="scale"><input type="radio" name="s4_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s4_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s4_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s4_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s4_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- 6. Values Alignment -->
-    <div class="section">
-      <div class="section-header">6. Values Alignment</div>
-      <table class="question-table">
-        <thead>
-          <tr>
-            <th>Statement</th>
-            <th class="scale">1</th>
-            <th class="scale">2</th>
-            <th class="scale">3</th>
-            <th class="scale">4</th>
-            <th class="scale">5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="question-row" data-section="6">
-            <td class="question-text">Decisions remain aligned with stated values, even when costly.</td>
-            <td class="scale"><input type="radio" name="s6_q1" value="1"></td>
-            <td class="scale"><input type="radio" name="s6_q1" value="2"></td>
-            <td class="scale"><input type="radio" name="s6_q1" value="3"></td>
-            <td class="scale"><input type="radio" name="s6_q1" value="4"></td>
-            <td class="scale"><input type="radio" name="s6_q1" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="6">
-            <td class="question-text">Short-term pressure does not routinely override long-term wisdom.</td>
-            <td class="scale"><input type="radio" name="s6_q2" value="1"></td>
-            <td class="scale"><input type="radio" name="s6_q2" value="2"></td>
-            <td class="scale"><input type="radio" name="s6_q2" value="3"></td>
-            <td class="scale"><input type="radio" name="s6_q2" value="4"></td>
-            <td class="scale"><input type="radio" name="s6_q2" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="6">
-            <td class="question-text">Ethical ambiguity is resolved collaboratively, not unilaterally.</td>
-            <td class="scale"><input type="radio" name="s6_q3" value="1"></td>
-            <td class="scale"><input type="radio" name="s6_q3" value="2"></td>
-            <td class="scale"><input type="radio" name="s6_q3" value="3"></td>
-            <td class="scale"><input type="radio" name="s6_q3" value="4"></td>
-            <td class="scale"><input type="radio" name="s6_q3" value="5"></td>
-          </tr>
-          <tr class="question-row" data-section="6">
-            <td class="question-text">Behavior under stress reflects the culture the team aspires to create.</td>
-            <td class="scale"><input type="radio" name="s6_q4" value="1"></td>
-            <td class="scale"><input type="radio" name="s6_q4" value="2"></td>
-            <td class="scale"><input type="radio" name="s6_q4" value="3"></td>
-            <td class="scale"><input type="radio" name="s6_q4" value="4"></td>
-            <td class="scale"><input type="radio" name="s6_q4" value="5"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- 5. Reflection & Learning Loop -->
+      <div class="section">
+        <div class="section-header">5. Reflection &amp; Learning Loop</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="5">
+              <td class="question-text">Past decisions are revisited to examine our reasoning patterns.</td>
+              <td class="scale"><input type="radio" name="s5_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s5_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s5_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s5_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s5_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="5">
+              <td class="question-text">Judgment strengths and gaps are identified and discussed.</td>
+              <td class="scale"><input type="radio" name="s5_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s5_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s5_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s5_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s5_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="5">
+              <td class="question-text">Lessons learned are documented and reused in future decisions.</td>
+              <td class="scale"><input type="radio" name="s5_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s5_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s5_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s5_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s5_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="5">
+              <td class="question-text">Feedback is viewed primarily as developmental, not judgmental.</td>
+              <td class="scale"><input type="radio" name="s5_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s5_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s5_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s5_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s5_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- Email capture at the bottom -->
-    <div class="email-block">
-      <label for="userEmail">Email (required to view results):</label>
-      <input type="email" id="userEmail" placeholder="you@example.com" />
-      <span style="font-size:0.8rem; color:#555;">Your email and scores may be saved for follow-up and benchmarking.</span>
-    </div>
+      <!-- 6. Values Alignment -->
+      <div class="section">
+        <div class="section-header">6. Values Alignment</div>
+        <table class="question-table">
+          <thead>
+            <tr>
+              <th>Statement</th>
+              <th class="scale">1</th>
+              <th class="scale">2</th>
+              <th class="scale">3</th>
+              <th class="scale">4</th>
+              <th class="scale">5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-row" data-section="6">
+              <td class="question-text">Decisions remain aligned with stated values, even when costly.</td>
+              <td class="scale"><input type="radio" name="s6_q1" value="1"></td>
+              <td class="scale"><input type="radio" name="s6_q1" value="2"></td>
+              <td class="scale"><input type="radio" name="s6_q1" value="3"></td>
+              <td class="scale"><input type="radio" name="s6_q1" value="4"></td>
+              <td class="scale"><input type="radio" name="s6_q1" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="6">
+              <td class="question-text">Short-term pressure does not routinely override long-term wisdom.</td>
+              <td class="scale"><input type="radio" name="s6_q2" value="1"></td>
+              <td class="scale"><input type="radio" name="s6_q2" value="2"></td>
+              <td class="scale"><input type="radio" name="s6_q2" value="3"></td>
+              <td class="scale"><input type="radio" name="s6_q2" value="4"></td>
+              <td class="scale"><input type="radio" name="s6_q2" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="6">
+              <td class="question-text">Ethical ambiguity is resolved collaboratively, not unilaterally.</td>
+              <td class="scale"><input type="radio" name="s6_q3" value="1"></td>
+              <td class="scale"><input type="radio" name="s6_q3" value="2"></td>
+              <td class="scale"><input type="radio" name="s6_q3" value="3"></td>
+              <td class="scale"><input type="radio" name="s6_q3" value="4"></td>
+              <td class="scale"><input type="radio" name="s6_q3" value="5"></td>
+            </tr>
+            <tr class="question-row" data-section="6">
+              <td class="question-text">Behavior under stress reflects the culture the team aspires to create.</td>
+              <td class="scale"><input type="radio" name="s6_q4" value="1"></td>
+              <td class="scale"><input type="radio" name="s6_q4" value="2"></td>
+              <td class="scale"><input type="radio" name="s6_q4" value="3"></td>
+              <td class="scale"><input type="radio" name="s6_q4" value="4"></td>
+              <td class="scale"><input type="radio" name="s6_q4" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- Actions -->
-    <div class="actions">
-      <button class="btn-primary" type="button" onclick="calculateJQ()">Calculate Scores</button>
-      <button class="btn-secondary" type="button" onclick="resetForm()">Clear All</button>
-    </div>
+      <!-- Email capture at the bottom -->
+      <div class="email-block">
+        <label for="userEmail">Email (required to view results):</label>
+        <input type="email" id="userEmail" placeholder="you@example.com" />
+        <span style="font-size:0.8rem; color:#555;">Your email and scores may be saved for follow-up and benchmarking.</span>
+      </div>
 
-    <!-- Results -->
-    <div class="results" id="results" style="display:none;">
-      <h2>Team JQ® Results</h2>
-      <div id="sectionResults" class="results-grid"></div>
-      <p id="overallScoreText"></p>
-      <div id="overallInterpretation"></div>
+      <!-- Hidden form + iframe to submit to Apps Script without leaving page -->
+      <iframe name="hidden_iframe" style="display:none;"></iframe>
+      <form id="submissionForm" action="" method="POST" target="hidden_iframe" style="display:none;">
+        <input type="hidden" name="email" id="formEmail">
+        <input type="hidden" name="section1" id="formSection1">
+        <input type="hidden" name="section2" id="formSection2">
+        <input type="hidden" name="section3" id="formSection3">
+        <input type="hidden" name="section4" id="formSection4">
+        <input type="hidden" name="section5" id="formSection5">
+        <input type="hidden" name="section6" id="formSection6">
+        <input type="hidden" name="overall" id="formOverall">
+      </form>
 
-      <div class="scoring-guide">
-        <strong>Scoring Guide (per section &amp; overall):</strong>
-        <ul>
-          <li><strong>1.0 – 2.0</strong> &rarr; <span class="score-risk">Reactive</span> — instinct-driven, volatile, unreflective</li>
-          <li><strong>2.1 – 3.4</strong> &rarr; <span class="score-watch">Emerging</span> — aware but inconsistent; reflection after mistakes</li>
-          <li><strong>3.5 – 4.2</strong> &rarr; <span class="score-strong">Deliberate</span> — steady reflection and composure under pressure</li>
-          <li><strong>4.3 – 5.0</strong> &rarr; <span class="score-strong">Exemplary</span> — calm, inclusive, disciplined even in crises</li>
-        </ul>
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn-primary" type="button" onclick="calculateJQ()">Calculate Scores</button>
+        <button class="btn-secondary" type="button" onclick="resetForm()">Clear All</button>
+      </div>
+
+      <!-- Results -->
+      <div class="results" id="results" style="display:none;">
+        <h2>Team JQ® Results</h2>
+        <div id="sectionResults" class="results-grid"></div>
+        <p id="overallScoreText"></p>
+        <div id="overallInterpretation"></div>
+
+        <div class="scoring-guide">
+          <strong>Scoring Guide (per section &amp; overall):</strong>
+          <ul>
+            <li><strong>1.0 – 2.0</strong> &rarr; <span class="score-risk">Reactive</span> — instinct-driven, volatile, unreflective</li>
+            <li><strong>2.1 – 3.4</strong> &rarr; <span class="score-watch">Emerging</span> — aware but inconsistent; reflection after mistakes</li>
+            <li><strong>3.5 – 4.2</strong> &rarr; <span class="score-strong">Deliberate</span> — steady reflection and composure under pressure</li>
+            <li><strong>4.3 – 5.0</strong> &rarr; <span class="score-strong">Exemplary</span> — calm, inclusive, disciplined even in crises</li>
+          </ul>
+        </div>
+
+        <!-- CTAs under results -->
+        <div class="results-ctas">
+          <div class="results-cta-block results-cta-share">
+            <p>
+              Please try to get at least one other team member to take this assessment.
+            </p>
+            <button class="btn-primary" type="button" onclick="shareAssessment()">
+              Share this assessment
+            </button>
+          </div>
+          <div class="results-cta-block results-cta-krishna">
+            <p>
+              Want to go deeper? Schedule a time with Krishna to review this assessment and next steps.
+            </p>
+            <button class="btn-secondary" type="button" onclick="openKrishnaBooking()">
+              Schedule a time with Krishna
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    // -------- CONFIG: Apps Script URL --------
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlTAf75SW5WLhLoWTr2TdRf7VD9s6cf_osxv0S67p3-DlDcfwOZR-EDTGkxAsKpSuJ/exec";
+
+    // Set form action on load
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("submissionForm");
+      if (form) {
+        form.action = APPS_SCRIPT_URL;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const startNow = params.get("start") === "now" || params.get("mode") === "now";
+      if (startNow) {
+        startAssessmentNow();
+      } else {
+        showIntro();
+      }
+    });
+
+    // -------- Intro screen control --------
+    function showIntro() {
+      const intro = document.getElementById("intro-screen");
+      const assessment = document.getElementById("assessment-screen");
+      if (intro) intro.style.display = "block";
+      if (assessment) assessment.style.display = "none";
+    }
+
+    function startAssessmentNow() {
+      const intro = document.getElementById("intro-screen");
+      const assessment = document.getElementById("assessment-screen");
+      if (intro) intro.style.display = "none";
+      if (assessment) assessment.style.display = "block";
+
+      const wrapper = document.querySelector(".assessment-wrapper");
+      if (wrapper) {
+        window.scrollTo({ top: wrapper.offsetTop, behavior: "smooth" });
+      }
+    }
+
+    function showTakeLaterForm() {
+      const choices = document.getElementById("intro-choices");
+      const form = document.getElementById("intro-later-form");
+      const thanks = document.getElementById("intro-later-thanks");
+      if (choices) choices.style.display = "none";
+      if (thanks) thanks.style.display = "none";
+      if (form) form.style.display = "block";
+    }
+
+    function submitTakeLaterEmail() {
+      const emailInput = document.getElementById("reminderEmail");
+      if (!emailInput) return;
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        alert("Please enter your email address so we can record that you’d like to take this assessment later.");
+        emailInput.focus();
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        alert("Please enter a valid email address (e.g., name@example.com).");
+        emailInput.focus();
+        return;
+      }
+
+      // Just store locally for now in case we want to hook it later
+      window.takeLaterEmail = email;
+
+      const form = document.getElementById("intro-later-form");
+      const thanks = document.getElementById("intro-later-thanks");
+      if (form) form.style.display = "none";
+      if (thanks) thanks.style.display = "block";
+
+      emailInput.value = "";
+    }
+
+    // -------- Core assessment logic --------
     function calculateJQ() {
       const emailInput = document.getElementById("userEmail");
       const email = emailInput.value.trim();
 
-      // Require email before showing results
       if (!email) {
         alert("Please enter your email address to view your Team JQ® results.");
         emailInput.focus();
@@ -666,7 +943,7 @@
       }
 
       const rows = document.querySelectorAll(".question-row");
-      const sectionScores = {}; // {section: {sum, count}}
+      const sectionScores = {};
       let overallSum = 0;
       let overallCount = 0;
 
@@ -734,8 +1011,33 @@
         resultsBlock.style.display = "block";
       }
 
-      // Send to backend (email + section averages + overall)
-      sendResultsToBackend(email, sectionAverages, overallAvg);
+      // Submit to Apps Script via hidden form
+      submitToAppsScript(email, sectionAverages, overallAvg);
+    }
+
+    function submitToAppsScript(email, sectionAverages, overallAvg) {
+      const form = document.getElementById("submissionForm");
+      if (!form) return;
+
+      document.getElementById("formEmail").value    = email || "";
+      document.getElementById("formSection1").value = sectionAverages[1] ?? "";
+      document.getElementById("formSection2").value = sectionAverages[2] ?? "";
+      document.getElementById("formSection3").value = sectionAverages[3] ?? "";
+      document.getElementById("formSection4").value = sectionAverages[4] ?? "";
+      document.getElementById("formSection5").value = sectionAverages[5] ?? "";
+      document.getElementById("formSection6").value = sectionAverages[6] ?? "";
+      document.getElementById("formOverall").value  = overallAvg ?? "";
+
+      form.submit(); // goes to hidden iframe; user stays on page
+    }
+
+    function resetForm() {
+      document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
+      document.getElementById("results").style.display = "none";
+      document.getElementById("sectionResults").innerHTML = "";
+      document.getElementById("overallScoreText").innerHTML = "";
+      document.getElementById("overallInterpretation").innerHTML = "";
+      document.getElementById("userEmail").value = "";
     }
 
     function validateEmail(email) {
@@ -778,35 +1080,31 @@
       }
     }
 
-    function resetForm() {
-      document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
-      document.getElementById("results").style.display = "none";
-      document.getElementById("sectionResults").innerHTML = "";
-      document.getElementById("overallScoreText").innerHTML = "";
-      document.getElementById("overallInterpretation").innerHTML = "";
-      document.getElementById("userEmail").value = "";
+    // -------- Sharing & booking --------
+    function shareAssessment() {
+      const url = window.location.href.split("#")[0];
+      const shareData = {
+        title: "Team JQ® Leadership Assessment",
+        text: "Take the Team JQ® Leadership Assessment and see how your team’s judgment holds up under pressure.",
+        url: url
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url)
+            .then(() => alert("Link copied to your clipboard. Please paste it into an email or chat to share."));
+        } else {
+          prompt("Copy this link to share the assessment with a colleague:", url);
+        }
+      }
     }
 
-function sendResultsToBackend(email, sectionAverages, overallAvg) {
-  const payload = {
-    email: email,
-    sections: sectionAverages,
-    overall: overallAvg
-  };
-
-  // IMPORTANT:
-  // - Use your Apps Script Web App URL
-  // - mode: "no-cors"
-  // - NO custom headers (so browser will send the request without blocking)
-  fetch("https://script.google.com/macros/s/AKfycbwW4XlXdR0dB1juieWdn8Ns2GCyzygM4t1y6RPMh5Gxl0c2_T_QOVQFLQOsaqjWSLs7/exec", {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(payload)
-  }).catch(err => {
-    console.error("Error sending results to backend:", err);
-  });
-}
-
+    function openKrishnaBooking() {
+      const bookingUrl = "https://cal.com/krishnapendyala";
+      window.open(bookingUrl, "_blank");
+    }
   </script>
 </body>
 </html>
