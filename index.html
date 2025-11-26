@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>Team JQ® Leadership Assessment</title>
 
+  <!-- Mobile viewport for proper scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <!-- Montserrat font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -155,7 +158,9 @@
       margin-bottom: 1.2rem;
       border: 1px solid var(--border-light);
       border-radius: 8px;
-      overflow: hidden;
+      /* allow horizontal scroll on small screens */
+      overflow-x: auto;
+      overflow-y: visible;
     }
 
     .section-header {
@@ -171,6 +176,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
+      min-width: 500px; /* so columns stay readable on mobile with horizontal scroll */
     }
 
     .question-table thead {
@@ -405,6 +411,19 @@
       }
       .assessment-wrapper {
         padding: 1.25rem 1.2rem 1.6rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .subtitle {
+        font-size: 0.9rem;
+      }
+      .question-table {
+        font-size: 0.8rem;
+      }
+      input[type="radio"] {
+        width: 18px;
+        height: 18px;
       }
     }
   </style>
@@ -850,7 +869,7 @@
 
   <script>
     // -------- CONFIG: Apps Script URL --------
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlTAf75SW5WLhLoWTr2TdRf7VD9s6cf_osxv0S67p3-DlDcfwOZR-EDTGkxAsKpSuJ/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUGh-GQm-WkG_XGTFxYQa1Q-pxet15AxaEVGGmXyz2hrSRmlxide5h7tpPwKl5GOGR/exec";
 
     // Set form action on load
     document.addEventListener("DOMContentLoaded", () => {
