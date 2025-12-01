@@ -821,6 +821,16 @@
         <input type="hidden" name="overall" id="formOverall">
       </form>
 
+      <!-- NEW: hidden form for "Take it later" emails -->
+      <form id="takeLaterForm"
+            action=""
+            method="POST"
+            target="hidden_iframe"
+            style="display:none;">
+        <input type="hidden" name="mode" value="take_later">
+        <input type="hidden" name="email" id="takeLaterEmail">
+      </form>
+
       <!-- Actions -->
       <div class="actions">
         <button class="btn-primary" type="button" onclick="calculateJQ()">Calculate Scores</button>
@@ -848,7 +858,7 @@
         <div class="results-ctas">
           <div class="results-cta-block results-cta-share">
             <p>
-              Please try to get at least one other team member to take this assessment.
+              Please try to get at least one other member from your leadership team to take this assessment.
             </p>
             <button class="btn-primary" type="button" onclick="shareAssessment()">
               Share this assessment
@@ -856,7 +866,7 @@
           </div>
           <div class="results-cta-block results-cta-krishna">
             <p>
-              Want to go deeper? Schedule a time with Krishna to review this assessment and next steps.
+              For a deeper review of this assessment, please schedule a brief zoom call with Krishna.
             </p>
             <button class="btn-secondary" type="button" onclick="openKrishnaBooking()">
               Schedule a time with Krishna
@@ -869,13 +879,19 @@
 
   <script>
     // -------- CONFIG: Apps Script URL --------
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUGh-GQm-WkG_XGTFxYQa1Q-pxet15AxaEVGGmXyz2hrSRmlxide5h7tpPwKl5GOGR/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaLshbidArJ9VPFQqw7XuuWi7D8VDrSMDX7-RJwn48mBHJ9AhyJmN8o9hmXBtmGDXI/exec";
 
     // Set form action on load
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("submissionForm");
       if (form) {
         form.action = APPS_SCRIPT_URL;
+      }
+
+      // NEW: wire take-later form to same endpoint
+      const laterForm = document.getElementById("takeLaterForm");
+      if (laterForm) {
+        laterForm.action = APPS_SCRIPT_URL;
       }
 
       const params = new URLSearchParams(window.location.search);
@@ -933,8 +949,16 @@
         return;
       }
 
-      // Just store locally for now in case we want to hook it later
+      // Still available if you ever want it on the client side
       window.takeLaterEmail = email;
+
+      // NEW: submit to Apps Script via hidden form
+      const laterForm = document.getElementById("takeLaterForm");
+      const laterEmailField = document.getElementById("takeLaterEmail");
+      if (laterForm && laterEmailField) {
+        laterEmailField.value = email;
+        laterForm.submit();  // posts mode=take_later + email to Apps Script
+      }
 
       const form = document.getElementById("intro-later-form");
       const thanks = document.getElementById("intro-later-thanks");
