@@ -99,20 +99,23 @@
       margin-top: 0.8rem;
     }
 
-    .intro-later-form {
+    .intro-later-form,
+    .intro-now-form {
       margin-top: 0.8rem;
       padding-top: 0.8rem;
       border-top: 1px dashed #e2b29b;
     }
 
-    .intro-later-form label {
+    .intro-later-form label,
+    .intro-now-form label {
       display: block;
       font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 0.3rem;
     }
 
-    .intro-later-form input[type="email"] {
+    .intro-later-form input[type="email"],
+    .intro-now-form input[type="email"] {
       width: 100%;
       max-width: 340px;
       padding: 0.4rem 0.55rem;
@@ -158,9 +161,9 @@
       margin-bottom: 1.2rem;
       border: 1px solid var(--border-light);
       border-radius: 8px;
-      /* allow horizontal scroll on small screens */
       overflow-x: auto;
       overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
     }
 
     .section-header {
@@ -176,7 +179,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
-      min-width: 500px; /* so columns stay readable on mobile with horizontal scroll */
+      min-width: 420px; /* narrower for phones, but still readable */
     }
 
     .question-table thead {
@@ -190,20 +193,23 @@
       border-bottom: 1px solid var(--border-light);
       text-align: left;
       vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .question-text {
+      max-width: 650px;
+      white-space: normal;
     }
 
     .question-table th.scale,
     .question-table td.scale {
       text-align: center;
       width: 40px;
+      min-width: 32px;
     }
 
     .question-row:nth-child(even) td {
       background: #fafafa;
-    }
-
-    .question-text {
-      max-width: 650px;
     }
 
     input[type="radio"] {
@@ -224,17 +230,13 @@
       font-size: 0.9rem;
     }
 
-    .email-block label {
+    .email-block strong {
       font-weight: 600;
       min-width: 120px;
     }
 
-    .email-block input[type="email"] {
-      flex: 1 1 220px;
-      padding: 0.4rem 0.55rem;
-      border-radius: 4px;
-      border: 1px solid var(--border-light);
-      font-size: 0.9rem;
+    .email-block span {
+      word-break: break-all;
     }
 
     .actions {
@@ -422,8 +424,18 @@
         font-size: 0.8rem;
       }
       input[type="radio"] {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .question-table {
+        min-width: 380px;
+      }
+      input[type="radio"] {
+        width: 24px;
+        height: 24px;
       }
     }
   </style>
@@ -448,22 +460,26 @@
       </ul>
 
       <div id="intro-choices" class="intro-buttons">
-        <!-- Take it later FIRST (teal primary) -->
+        <!-- Take it later -->
         <button class="btn-primary" type="button" onclick="showTakeLaterForm()">
           Take It later
         </button>
-        <!-- Take it now (secondary outline) -->
-        <button class="btn-secondary" type="button" onclick="startAssessmentNow()">
+        <!-- Take it now -->
+        <button class="btn-secondary" type="button" onclick="showTakeNowForm()">
           Take It Now
         </button>
       </div>
 
+      <!-- Take it later email form -->
       <div id="intro-later-form" class="intro-later-form" style="display:none;">
         <label for="reminderEmail">Enter your email so we can record that you’d like to take this assessment later:</label>
         <input type="email" id="reminderEmail" placeholder="you@example.com" />
         <div class="intro-buttons" style="margin-top:0.3rem;">
           <button class="btn-primary" type="button" onclick="submitTakeLaterEmail()">
             Submit
+          </button>
+          <button class="btn-secondary" type="button" onclick="backToIntroChoices()">
+            Back
           </button>
         </div>
       </div>
@@ -472,8 +488,22 @@
         Thank you. You'll receive an email along with the assessment link.
       </div>
 
+      <!-- Take it now email form -->
+      <div id="intro-now-form" class="intro-now-form" style="display:none;">
+        <label for="startNowEmail">Enter your email to start the assessment now:</label>
+        <input type="email" id="startNowEmail" placeholder="you@example.com" />
+        <div class="intro-buttons" style="margin-top:0.3rem;">
+          <button class="btn-primary" type="button" onclick="submitTakeNowEmail()">
+            Start Assessment
+          </button>
+          <button class="btn-secondary" type="button" onclick="backToIntroChoices()">
+            Back
+          </button>
+        </div>
+      </div>
+
       <div class="intro-note">
-        Note: Your email is used to record your interest and to aggregate results. It will not be shared outside Team JQ®.
+        Note: Your email is used to record your interest and to aggregate results. It will not be shared.
       </div>
     </div>
 
@@ -482,8 +512,10 @@
       <div class="instructions">
         <strong>Instructions:</strong>
         For each statement, select a rating from <strong>1</strong> (Rarely True) to
-        <strong>5</strong> (Consistently True). When finished, enter your email at the bottom and click
+        <strong>5</strong> (Consistently True). When finished, click
         <strong>“Calculate Scores”</strong> to see section and overall results.
+        <br><br>
+        On mobile: you can swipe sideways within each section table to see all 1–5 options.
       </div>
 
       <div class="legend">
@@ -801,15 +833,18 @@
         </table>
       </div>
 
-      <!-- Email capture at the bottom -->
+      <!-- Email summary at the bottom (no visible input) -->
       <div class="email-block">
-        <label for="userEmail">Email (required to view results):</label>
-        <input type="email" id="userEmail" placeholder="you@example.com" />
-        <span style="font-size:0.8rem; color:#555;">Your email and scores may be saved for follow-up and benchmarking.</span>
+        <strong>Email:</strong>
+        <span id="emailSummaryText"></span>
+        <!-- Hidden input used only for posting to Apps Script -->
+        <input type="hidden" id="userEmail" />
       </div>
 
-      <!-- Hidden form + iframe to submit to Apps Script without leaving page -->
+      <!-- Hidden iframe + forms -->
       <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+      <!-- Assessment completion form -->
       <form id="submissionForm" action="" method="POST" target="hidden_iframe" style="display:none;">
         <input type="hidden" name="email" id="formEmail">
         <input type="hidden" name="section1" id="formSection1">
@@ -821,7 +856,7 @@
         <input type="hidden" name="overall" id="formOverall">
       </form>
 
-      <!-- NEW: hidden form for "Take it later" emails -->
+      <!-- Take it later form -->
       <form id="takeLaterForm"
             action=""
             method="POST"
@@ -829,6 +864,16 @@
             style="display:none;">
         <input type="hidden" name="mode" value="take_later">
         <input type="hidden" name="email" id="takeLaterEmail">
+      </form>
+
+      <!-- Start now form (logs email before assessment) -->
+      <form id="startNowForm"
+            action=""
+            method="POST"
+            target="hidden_iframe"
+            style="display:none;">
+        <input type="hidden" name="mode" value="start_now">
+        <input type="hidden" name="email" id="startNowHiddenEmail">
       </form>
 
       <!-- Actions -->
@@ -879,27 +924,35 @@
 
   <script>
     // -------- CONFIG: Apps Script URL --------
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaLshbidArJ9VPFQqw7XuuWi7D8VDrSMDX7-RJwn48mBHJ9AhyJmN8o9hmXBtmGDXI/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIcy_Wmk8jT7EQOy8EcrRr_ygBi0HuJuODeEP1gcWmWmL7pyGkNEjitgPTQiOg9eaG/exec";
 
-    // Set form action on load
+    // Holds email captured when user chooses "Take it now"
+    let assessmentEmail = "";
+
     document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("submissionForm");
-      if (form) {
-        form.action = APPS_SCRIPT_URL;
+      const submissionForm = document.getElementById("submissionForm");
+      if (submissionForm) {
+        submissionForm.action = APPS_SCRIPT_URL;
       }
 
-      // NEW: wire take-later form to same endpoint
       const laterForm = document.getElementById("takeLaterForm");
       if (laterForm) {
         laterForm.action = APPS_SCRIPT_URL;
       }
 
+      const startForm = document.getElementById("startNowForm");
+      if (startForm) {
+        startForm.action = APPS_SCRIPT_URL;
+      }
+
       const params = new URLSearchParams(window.location.search);
       const startNow = params.get("start") === "now" || params.get("mode") === "now";
+
+      showIntro();
+
+      // If link uses ?start=now, show the "Take it now" email capture
       if (startNow) {
-        startAssessmentNow();
-      } else {
-        showIntro();
+        showTakeNowForm();
       }
     });
 
@@ -909,6 +962,24 @@
       const assessment = document.getElementById("assessment-screen");
       if (intro) intro.style.display = "block";
       if (assessment) assessment.style.display = "none";
+
+      const choices = document.getElementById("intro-choices");
+      const laterForm = document.getElementById("intro-later-form");
+      const nowForm = document.getElementById("intro-now-form");
+      const laterThanks = document.getElementById("intro-later-thanks");
+      if (choices) choices.style.display = "flex";
+      if (laterForm) laterForm.style.display = "none";
+      if (nowForm) nowForm.style.display = "none";
+      if (laterThanks) laterThanks.style.display = "none";
+    }
+
+    function backToIntroChoices() {
+      const choices = document.getElementById("intro-choices");
+      const laterForm = document.getElementById("intro-later-form");
+      const nowForm = document.getElementById("intro-now-form");
+      if (choices) choices.style.display = "flex";
+      if (laterForm) laterForm.style.display = "none";
+      if (nowForm) nowForm.style.display = "none";
     }
 
     function startAssessmentNow() {
@@ -925,11 +996,24 @@
 
     function showTakeLaterForm() {
       const choices = document.getElementById("intro-choices");
-      const form = document.getElementById("intro-later-form");
-      const thanks = document.getElementById("intro-later-thanks");
+      const laterForm = document.getElementById("intro-later-form");
+      const nowForm = document.getElementById("intro-now-form");
+      const laterThanks = document.getElementById("intro-later-thanks");
       if (choices) choices.style.display = "none";
-      if (thanks) thanks.style.display = "none";
-      if (form) form.style.display = "block";
+      if (laterThanks) laterThanks.style.display = "none";
+      if (nowForm) nowForm.style.display = "none";
+      if (laterForm) laterForm.style.display = "block";
+    }
+
+    function showTakeNowForm() {
+      const choices = document.getElementById("intro-choices");
+      const laterForm = document.getElementById("intro-later-form");
+      const nowForm = document.getElementById("intro-now-form");
+      const laterThanks = document.getElementById("intro-later-thanks");
+      if (choices) choices.style.display = "none";
+      if (laterForm) laterForm.style.display = "none";
+      if (laterThanks) laterThanks.style.display = "none";
+      if (nowForm) nowForm.style.display = "block";
     }
 
     function submitTakeLaterEmail() {
@@ -949,15 +1033,11 @@
         return;
       }
 
-      // Still available if you ever want it on the client side
-      window.takeLaterEmail = email;
-
-      // NEW: submit to Apps Script via hidden form
       const laterForm = document.getElementById("takeLaterForm");
       const laterEmailField = document.getElementById("takeLaterEmail");
       if (laterForm && laterEmailField) {
         laterEmailField.value = email;
-        laterForm.submit();  // posts mode=take_later + email to Apps Script
+        laterForm.submit();
       }
 
       const form = document.getElementById("intro-later-form");
@@ -968,13 +1048,13 @@
       emailInput.value = "";
     }
 
-    // -------- Core assessment logic --------
-    function calculateJQ() {
-      const emailInput = document.getElementById("userEmail");
+    function submitTakeNowEmail() {
+      const emailInput = document.getElementById("startNowEmail");
+      if (!emailInput) return;
       const email = emailInput.value.trim();
 
       if (!email) {
-        alert("Please enter your email address to view your Team JQ® results.");
+        alert("Please enter your email address to start the assessment.");
         emailInput.focus();
         return;
       }
@@ -982,6 +1062,48 @@
       if (!validateEmail(email)) {
         alert("Please enter a valid email address (e.g., name@example.com).");
         emailInput.focus();
+        return;
+      }
+
+      // Save for later
+      assessmentEmail = email;
+
+      // Update hidden email and summary text
+      const hiddenEmailInput = document.getElementById("userEmail");
+      if (hiddenEmailInput) hiddenEmailInput.value = email;
+
+      const summarySpan = document.getElementById("emailSummaryText");
+      if (summarySpan) summarySpan.textContent = email;
+
+      // Log "start now" to sheet immediately
+      const startForm = document.getElementById("startNowForm");
+      const startHiddenField = document.getElementById("startNowHiddenEmail");
+      if (startForm && startHiddenField) {
+        startHiddenField.value = email;
+        startForm.submit();
+      }
+
+      // Clear the intro input and start the assessment
+      emailInput.value = "";
+      startAssessmentNow();
+    }
+
+    // -------- Core assessment logic --------
+    function calculateJQ() {
+      // Use email from Take It Now
+      let email = assessmentEmail;
+      const hiddenEmailInput = document.getElementById("userEmail");
+      if (!email && hiddenEmailInput) {
+        email = hiddenEmailInput.value.trim();
+      }
+
+      if (!email) {
+        alert("Email is missing. Please go back and start the assessment again.");
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        alert("Please enter a valid email address.");
         return;
       }
 
@@ -1080,7 +1202,13 @@
       document.getElementById("sectionResults").innerHTML = "";
       document.getElementById("overallScoreText").innerHTML = "";
       document.getElementById("overallInterpretation").innerHTML = "";
-      document.getElementById("userEmail").value = "";
+
+      const hiddenEmailInput = document.getElementById("userEmail");
+      const summarySpan = document.getElementById("emailSummaryText");
+      if (hiddenEmailInput) hiddenEmailInput.value = "";
+      if (summarySpan) summarySpan.textContent = "";
+
+      assessmentEmail = "";
     }
 
     function validateEmail(email) {
