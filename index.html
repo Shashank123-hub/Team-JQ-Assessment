@@ -161,9 +161,9 @@
       margin-bottom: 1.2rem;
       border: 1px solid var(--border-light);
       border-radius: 8px;
-      overflow-x: auto;
+      /* no horizontal scroll on mobile now */
+      overflow-x: visible;
       overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
     }
 
     .section-header {
@@ -179,7 +179,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
-      min-width: 420px; /* narrower for phones, but still readable */
+      table-layout: auto; /* let browser fit radios + text */
     }
 
     .question-table thead {
@@ -189,7 +189,7 @@
 
     .question-table th,
     .question-table td {
-      padding: 0.45rem 0.5rem;
+      padding: 0.45rem 0.4rem;
       border-bottom: 1px solid var(--border-light);
       text-align: left;
       vertical-align: middle;
@@ -205,7 +205,7 @@
     .question-table td.scale {
       text-align: center;
       width: 40px;
-      min-width: 32px;
+      min-width: 28px;
     }
 
     .question-row:nth-child(even) td {
@@ -423,6 +423,10 @@
       .question-table {
         font-size: 0.8rem;
       }
+      .question-table th,
+      .question-table td {
+        padding: 0.4rem 0.3rem;
+      }
       input[type="radio"] {
         width: 22px;
         height: 22px;
@@ -431,7 +435,18 @@
 
     @media (max-width: 480px) {
       .question-table {
-        min-width: 380px;
+        font-size: 0.78rem;
+      }
+      .question-table th,
+      .question-table td {
+        padding: 0.35rem 0.25rem;
+      }
+      .question-table th.scale,
+      .question-table td.scale {
+        width: 10%;
+      }
+      .question-text {
+        width: 50%;
       }
       input[type="radio"] {
         width: 24px;
@@ -490,7 +505,7 @@
 
       <!-- Take it now email form -->
       <div id="intro-now-form" class="intro-now-form" style="display:none;">
-        <label for="startNowEmail">Enter your email to start the assessment now:</label>
+        <label for="startNowEmail">Enter your email so we can create a report for you:</label>
         <input type="email" id="startNowEmail" placeholder="you@example.com" />
         <div class="intro-buttons" style="margin-top:0.3rem;">
           <button class="btn-primary" type="button" onclick="submitTakeNowEmail()">
@@ -514,8 +529,6 @@
         For each statement, select a rating from <strong>1</strong> (Rarely True) to
         <strong>5</strong> (Consistently True). When finished, click
         <strong>“Calculate Scores”</strong> to see section and overall results.
-        <br><br>
-        On mobile: you can swipe sideways within each section table to see all 1–5 options.
       </div>
 
       <div class="legend">
@@ -924,7 +937,7 @@
 
   <script>
     // -------- CONFIG: Apps Script URL --------
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIcy_Wmk8jT7EQOy8EcrRr_ygBi0HuJuODeEP1gcWmWmL7pyGkNEjitgPTQiOg9eaG/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3cP5lgSGrmBYy7OBPdASQuPIT-jpXSYCLNG9LI5-H1d_eHGzAYVCwwBV0yKPs2ok/exec";
 
     // Holds email captured when user chooses "Take it now"
     let assessmentEmail = "";
