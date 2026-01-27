@@ -977,6 +977,7 @@
         <input type="hidden" name="role" id="startNowHiddenRole">
       </form>
 
+
       <!-- Share tracking (up to 3) -->
       <form id="shareForm" action="" method="POST" target="hidden_iframe" style="display:none;">
         <input type="hidden" name="mode" value="share">
@@ -1076,6 +1077,34 @@
   <script>
     // -------- CONFIG --------
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_9d7l5wRXz6OuEfKPS1LhRmgzvK3E1jmfBYHhbZppVXwEWs0S9zGZDl-ylAyJyJP8/exec";
+
+    const SHARE_EMAIL_SUBJECT = "Need your perspective";
+
+    function buildShareEmailBody_(assessmentUrl) {
+  return [
+    "Hi!",
+    "",
+    "In my recent workshop, we established that at least four perspectives are needed to gain an accurate picture of any situation.",
+    "",
+    "To get a fuller view of our team’s judgment capability, I am inviting you to complete this short assessment.",
+    "",
+    "Team JQ® Leadership Assessment:",
+    assessmentUrl,
+    "",
+    "Thank you."
+  ].join("\n");
+}
+
+    const SHARE_EMAIL_BODY = `Hi!
+
+    In my recent workshop, we established that at least four perspectives are needed to gain an accurate picture of any situation.
+
+    To get a fuller view of our team’s judgment capability, I am inviting you to complete this short assessment.
+
+    Team JQ® Leadership Assessment:
+    https://team-jq.vercel.app/
+
+    Thank you.`;
 
     // Captured at Take It Now
     let assessmentEmail = "";
@@ -1437,21 +1466,42 @@
 
       closeShareModal();
 
-      const url = window.location.href.split("#")[0];
-      const shareData = {
-        title: "Team JQ® Leadership Assessment",
-        text: "Take the Team JQ® Leadership Assessment and see how your team’s judgment holds up under pressure.",
-        url
-      };
+      const assessmentUrl = window.location.href.split("#")[0];
 
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      } else if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => alert("Link copied. Paste it into email/chat to share."));
-      } else {
-        prompt("Copy this link to share:", url);
-      }
-    }
+// collect ONLY the emails that were actually filled
+const emails = pairs
+  .filter(p => p.email)
+  .map(p => p.email);
+
+// Build mailto
+const subject = encodeURIComponent(SHARE_EMAIL_SUBJECT);
+const body = encodeURIComponent(buildShareEmailBody_(assessmentUrl));
+
+// IMPORTANT: join emails with comma (not encoded commas)
+const to = emails.join(",");
+
+const mailtoUrl = `mailto:${to}?subject=${subject}&body=${body}`;
+
+// Launch email compose (more reliable than window.open)
+window.location.href = mailtoUrl;
+
+// Fallback: copy if mailto handler doesn't open
+setTimeout(() => {
+  const msg =
+`TO: ${to}
+SUBJECT: ${SHARE_EMAIL_SUBJECT}
+
+${buildShareEmailBody_(assessmentUrl)}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg)
+      .then(() => alert("Couldn’t open your email app. Email details copied—paste into Gmail/Outlook."))
+      .catch(() => prompt("Couldn’t open your email app. Copy this:", msg));
+  } else {
+    prompt("Couldn’t open your email app. Copy this:", msg);
+  }
+}, 800);
+        }
 
     function openKrishnaBooking() {
       window.open("https://cal.com/krishnapendyala", "_blank");
