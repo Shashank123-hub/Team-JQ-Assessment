@@ -28,6 +28,21 @@
       color: #222;
     }
 
+    html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.question-text,
+.instructions,
+.subtitle,
+.intro-text-main,
+.results,
+.results-cta-block p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
     .assessment-wrapper {
       max-width: 1100px;
       margin: 0 auto;
@@ -467,31 +482,34 @@
       input[type="radio"]{ width: 28px; height: 28px; transform: scale(1.15); }
       .share-grid { grid-template-columns: 1fr; }
       /* Hide the desktop header on mobile */
-.question-table thead { display: none; }
+/* Mobile: hide header */
+.question-table thead { display: none !important; }
 
-/* Make each question row a 5-column grid (1–5) */
-.question-table tr.question-row {
+/* Mobile: ONLY tbody question rows become grid (prevents teal takeover) */
+.question-table tbody tr.question-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.35rem;
-  padding: 0.45rem 0.45rem;
+  padding: 0.45rem;
+  border-bottom: 1px solid var(--border-light);
 }
 
-/* Remove table-ish borders inside the row on mobile */
-.question-table tr.question-row td {
+.question-table tbody tr.question-row td {
   border-bottom: none;
   padding: 0;
+  background: transparent;
 }
 
-/* Statement takes full width above the 1–5 grid */
-.question-table tr.question-row td.question-text {
+/* Statement spans full width */
+.question-table tbody tr.question-row td.question-text {
   grid-column: 1 / -1;
   padding: 0 0 0.35rem 0;
   font-size: 0.9rem;
+  min-width: 0;
 }
 
-/* Each scale cell becomes its own tappable box */
-.question-table tr.question-row td.scale {
+/* Each scale is its own box */
+.question-table tbody tr.question-row td.scale {
   width: auto;
   min-width: 0;
   display: flex;
@@ -505,34 +523,67 @@
   background: #fff;
 }
 
-.question-table tr.question-row td.scale:hover {
-  background: #fff3ee;
-}
+/* 1–5 labels above radio */
+.question-table tbody tr.question-row td.scale:nth-of-type(2)::before { content: "1"; }
+.question-table tbody tr.question-row td.scale:nth-of-type(3)::before { content: "2"; }
+.question-table tbody tr.question-row td.scale:nth-of-type(4)::before { content: "3"; }
+.question-table tbody tr.question-row td.scale:nth-of-type(5)::before { content: "4"; }
+.question-table tbody tr.question-row td.scale:nth-of-type(6)::before { content: "5"; }
 
-/* 1–5 labels above each radio */
-.question-table tr.question-row td.scale:nth-of-type(2)::before { content: "1"; }
-.question-table tr.question-row td.scale:nth-of-type(3)::before { content: "2"; }
-.question-table tr.question-row td.scale:nth-of-type(4)::before { content: "3"; }
-.question-table tr.question-row td.scale:nth-of-type(5)::before { content: "4"; }
-.question-table tr.question-row td.scale:nth-of-type(6)::before { content: "5"; }
-
-.question-table tr.question-row td.scale::before {
+.question-table tbody tr.question-row td.scale::before {
   font-size: 0.7rem;
   font-weight: 600;
   color: #444;
   line-height: 1;
 }
 
-/* Prevent giant radios from colliding on small screens */
-.question-table tr.question-row input[type="radio"]{
+/* Smaller radios on mobile */
+.question-table tbody tr.question-row input[type="radio"]{
   width: 20px;
   height: 20px;
   transform: none;
 }
-.question-table tr.question-row.is-hidden {
-    display: none !important;
-  }
+
+/* Ensure hidden rows really hide */
+.question-table tbody tr.question-row.is-hidden { display: none !important; }
     }
+
+.scale-grid{
+  grid-template-columns: 1fr;   /* stack instead of 2 columns */
+  gap: 0.15rem;
+}
+
+.scale-grid span,
+.scale-last span{
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.question-table tbody tr.question-row {
+  width: 100%;
+  max-width: 100%;
+}
+
+.question-table tbody tr.question-row td.scale {
+  max-width: 100%;
+}
+
+
+/* Scale labels: 2 side-by-side, then 2 side-by-side, then 5 on next line */
+.scale-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 1rem;
+  margin-top: 0.35rem;
+}
+.scale-last{
+  margin-top: 0.25rem;
+}
+.scale-grid span,
+.scale-last span{
+  font-size: 0.9rem;
+}
+
   </style>
 </head>
 
@@ -598,12 +649,16 @@
         <strong>Instructions:</strong>
         For each statement, select a rating from <strong>1</strong> to
         <strong>5</strong>.<br>
-        <strong>Scale:</strong><br>
-        <span>1 = Rarely True</span><br>
-        <span>2 = Sometimes True</span><br>
-        <span>3 = Occasionally True</span><br>
-        <span>4 = Often True</span><br>
-        <span>5 = Consistently True</span>
+        <strong>Scale:</strong>
+<div class="scale-grid">
+  <span>1 = Rarely</span>
+  <span>2 = Sometimes</span>
+  <span>3 = Occasionally</span>
+  <span>4 = Often</span>
+</div>
+<div class="scale-last">
+  <span>5 = Consistently</span>
+</div>
       </div>
 
       <div id="stepperBar" class="stepper-bar" style="display:none;">
@@ -968,6 +1023,10 @@
             <button class="btn-secondary" type="button" onclick="openKrishnaBooking()">Schedule a time with Krishna</button>
           </div>
         </div>
+        <div class="actions" style="margin-top: 1rem;">
+    <button class="btn-primary" type="button" onclick="printPage()">Print / Save PDF</button>
+  </div>
+</div>
       </div>
     </div>
 
@@ -975,7 +1034,7 @@
     <div id="shareModalOverlay" class="modal-overlay" aria-hidden="true">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
         <h3 id="shareModalTitle">Before you share</h3>
-        <p>Enter up to 3 colleague emails to share the assessment.</p>
+        <p>Since you know it takes at least four perspectives to gain a fuller picture, please share this assessment with three others.</p>
 
         <div class="share-grid">
           <div>
@@ -1066,6 +1125,8 @@
       document.getElementById("intro-later-thanks").style.display = "none";
       document.getElementById("intro-now-form").style.display = "block";
     }
+
+    function printPage() { window.print(); }
 
     function submitTakeLaterEmail() {
       const emailInput = document.getElementById("reminderEmail");
