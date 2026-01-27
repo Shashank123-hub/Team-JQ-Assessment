@@ -1095,6 +1095,17 @@
   ].join("\n");
 }
 
+  function isLikelyMobile_() {
+  return window.matchMedia("(pointer:coarse)").matches ||
+         /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function openEmailComposeMobileOnly_(toList, subject, body) {
+  const to = (toList || []).join(",");
+  const mailtoUrl = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoUrl;
+}
+
     const SHARE_EMAIL_BODY = `Hi!
 
     In my recent workshop, we established that at least four perspectives are needed to gain an accurate picture of any situation.
@@ -1466,42 +1477,56 @@
 
       closeShareModal();
 
-      const assessmentUrl = window.location.href.split("#")[0];
+const assessmentUrl = window.location.href.split("#")[0];
 
-// collect ONLY the emails that were actually filled
 const emails = pairs
   .filter(p => p.email)
   .map(p => p.email);
 
-// Build mailto
-const subject = encodeURIComponent(SHARE_EMAIL_SUBJECT);
-const body = encodeURIComponent(buildShareEmailBody_(assessmentUrl));
+const subject = SHARE_EMAIL_SUBJECT;
+const bodyText = buildShareEmailBody_(assessmentUrl);
 
-// IMPORTANT: join emails with comma (not encoded commas)
-const to = emails.join(",");
+// MOBILE: mailto prefill
+if (isLikelyMobile_()) {
+  openEmailComposeMobileOnly_(emails, subject, bodyText);
 
-const mailtoUrl = `mailto:${to}?subject=${subject}&body=${body}`;
+  // fallback if mail app doesn't open
+  setTimeout(() => {
+    const msg =
+`TO: ${emails.join(",")}
+SUBJECT: ${subject}
 
-// Launch email compose (more reliable than window.open)
-window.location.href = mailtoUrl;
+${bodyText}`;
 
-// Fallback: copy if mailto handler doesn't open
-setTimeout(() => {
-  const msg =
-`TO: ${to}
-SUBJECT: ${SHARE_EMAIL_SUBJECT}
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(msg)
+        .then(() => alert("If your email app didn’t open, the email text was copied. Paste into Gmail/Outlook."))
+        .catch(() => prompt("Copy this into your email:", msg));
+    } else {
+      prompt("Copy this into your email:", msg);
+    }
+  }, 800);
 
-${buildShareEmailBody_(assessmentUrl)}`;
+  return;
+}
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(msg)
-      .then(() => alert("Couldn’t open your email app. Email details copied—paste into Gmail/Outlook."))
-      .catch(() => prompt("Couldn’t open your email app. Copy this:", msg));
-  } else {
-    prompt("Couldn’t open your email app. Copy this:", msg);
-  }
-}, 800);
-        }
+// DESKTOP/PC: old option (share/copy link)
+const shareData = {
+  title: "Team JQ® Leadership Assessment",
+  text: "Team JQ® Leadership Assessment link:",
+  url: assessmentUrl
+};
+
+if (navigator.share) {
+  navigator.share(shareData).catch(() => {});
+} else if (navigator.clipboard && navigator.clipboard.writeText) {
+  navigator.clipboard.writeText(assessmentUrl)
+    .then(() => alert("Link copied. Paste it into email/chat to share."))
+    .catch(() => prompt("Copy this link to share:", assessmentUrl));
+} else {
+  prompt("Copy this link to share:", assessmentUrl);
+}
+    }
 
     function openKrishnaBooking() {
       window.open("https://cal.com/krishnapendyala", "_blank");
