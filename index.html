@@ -596,7 +596,7 @@
 
     <!-- INTRO SCREEN -->
     <div id="intro-screen" class="intro-screen">
-      <div class="intro-heading">When would you like to do this?</div>
+      <div id="intro-heading" class="intro-heading">When would you like to do this?</div>
       <div class="intro-text-main">
         This short assessment shows where your team’s judgment is strong and where it is fragile under pressure.
       </div>
@@ -649,14 +649,11 @@
         <strong>Instructions:</strong>
         For each statement, select a rating from <strong>1</strong> to
         <strong>5</strong>.<br>
-        <strong>Scale:</strong>
+        <strong>Scale:</strong>  1 = Never  
 <div class="scale-grid">
-  <span>1 = Rarely</span>
   <span>2 = Sometimes</span>
   <span>3 = Occasionally</span>
   <span>4 = Often</span>
-</div>
-<div class="scale-last">
   <span>5 = Consistently</span>
 </div>
       </div>
@@ -1076,7 +1073,7 @@
 
   <script>
     // -------- CONFIG --------
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_9d7l5wRXz6OuEfKPS1LhRmgzvK3E1jmfBYHhbZppVXwEWs0S9zGZDl-ylAyJyJP8/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIzGFcIaxcHcjtjxw458nsyyclff4U7moK3YkKDL3p792GzHqO7-QDPINrlQlM2dBV/exec";
 
     const SHARE_EMAIL_SUBJECT = "Need your perspective";
 
@@ -1147,24 +1144,36 @@ function openEmailComposeMobileOnly_(toList, subject, body) {
     }
 
     function backToIntroChoices() {
-      document.getElementById("intro-choices").style.display = "flex";
-      document.getElementById("intro-later-form").style.display = "none";
-      document.getElementById("intro-now-form").style.display = "none";
-    }
+  document.getElementById("intro-choices").style.display = "flex";
+  document.getElementById("intro-later-form").style.display = "none";
+  document.getElementById("intro-now-form").style.display = "none";
+
+  // SHOW the heading again
+  const heading = document.getElementById("intro-heading");
+  if (heading) heading.style.display = "block";
+}
 
     function showTakeLaterForm() {
-      document.getElementById("intro-choices").style.display = "none";
-      document.getElementById("intro-now-form").style.display = "none";
-      document.getElementById("intro-later-thanks").style.display = "none";
-      document.getElementById("intro-later-form").style.display = "block";
-    }
+  document.getElementById("intro-choices").style.display = "none";
+  document.getElementById("intro-now-form").style.display = "none";
+  document.getElementById("intro-later-thanks").style.display = "none";
+  document.getElementById("intro-later-form").style.display = "block";
+
+  // HIDE the heading
+  const heading = document.getElementById("intro-heading");
+  if (heading) heading.style.display = "none";
+}
 
     function showTakeNowForm() {
-      document.getElementById("intro-choices").style.display = "none";
-      document.getElementById("intro-later-form").style.display = "none";
-      document.getElementById("intro-later-thanks").style.display = "none";
-      document.getElementById("intro-now-form").style.display = "block";
-    }
+  document.getElementById("intro-choices").style.display = "none";
+  document.getElementById("intro-later-form").style.display = "none";
+  document.getElementById("intro-later-thanks").style.display = "none";
+  document.getElementById("intro-now-form").style.display = "block";
+
+  // HIDE the heading
+  const heading = document.getElementById("intro-heading");
+  if (heading) heading.style.display = "none";
+}
 
     function printPage() { window.print(); }
 
